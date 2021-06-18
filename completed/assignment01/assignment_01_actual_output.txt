@@ -1,21 +1,21 @@
 [1] 3 2 1
-[1] "three" "two"   "one"  
+[1] "three" "two"   "one"
 [1] 7.7
 [1] TRUE
 [1] 6.957143
-Tuesday 
-    7.7 
+Tuesday
+    7.7
 [1] FALSE
-   Sunday    Monday   Tuesday Wednesday  Thursday    Friday  Saturday 
-    FALSE      TRUE     FALSE     FALSE     FALSE     FALSE     FALSE 
-Assignment 1 Assignment 2 Assignment 3 
-       338.7        358.0        349.3 
-Florinda Baird     Jinny Foss     Lou Purvis   Nola Maloney 
-         279.2          250.4          229.3          287.1 
-Fantasy Mystery  Sci-Fi 
-      2       1       3 
-     no neutral     yes 
-      2       2       1 
+   Sunday    Monday   Tuesday Wednesday  Thursday    Friday  Saturday
+    FALSE      TRUE     FALSE     FALSE     FALSE     FALSE     FALSE
+Assignment 1 Assignment 2 Assignment 3
+       338.7        358.0        349.3
+Florinda Baird     Jinny Foss     Lou Purvis   Nola Maloney
+         279.2          250.4          229.3          287.1
+Fantasy Mystery  Sci-Fi
+      2       1       3
+     no neutral     yes
+      2       2       1
                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
 Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
 Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
