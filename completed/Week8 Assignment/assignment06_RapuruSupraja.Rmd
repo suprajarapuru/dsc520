@@ -1,0 +1,116 @@
+---
+title: "assignment_06_RapuruSupraja"
+author: "Supraja Rapuru"
+date: "8/1/2021"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r include = FALSE}
+## Set the working directory to the root of your DSC 520 directory
+setwd("/Users/Supraja/dsc520")
+dir()
+## Load the `data/r4ds/heights.csv` to
+heights_df <- read.csv("data/r4ds/heights.csv")
+str(heights_df)
+## Load the ggplot2 library
+library(ggplot2)
+## Fit a linear model using the `age` variable as the predictor and `earn` as the outcome
+age_lm <-  lm(heights_df$earn ~ heights_df$age)
+```
+```{r include = TRUE}
+## View the summary of your model using `summary()`
+summary(age_lm)
+```
+```{r include = FALSE}
+## Creating predictions using `predict()`
+# find min and max of ages from which to create sample list
+min(heights_df$age)
+max(heights_df$age)
+# originally tried this with 100 as sample size, but then the age_predict_df didn't work because the number or rows were different
+# changed number of rows for sampling to match rows in heights_df
+age_sample <- data.frame(age_sample = sample(18:91, 1192, replace = TRUE))
+age_predict_df <- data.frame(earn = predict(age_lm,age_sample), age = age_sample)
+summary(age_predict_df)
+```
+```{r echo = FALSE}
+## Plot the predictions against the original data
+ggplot(heights_df, aes(x = age, y = earn)) +
+  geom_point(color = 'blue') +
+  geom_smooth(method = "lm", color = 'red', data = age_predict_df, aes(x = age_sample, y = earn))
+```
+```{r include = FALSE}
+mean_earn <- mean(heights_df$earn)
+## Corrected Sum of Squares Total
+sst <- sum((mean_earn - heights_df$earn)^2)
+## Corrected Sum of Squares for Model
+ssm <- sum((mean_earn - age_predict_df$earn)^2)
+## Residuals
+residuals <- heights_df$earn - age_predict_df$earn
+## Sum of Squares for Error
+sse <- sum(residuals^2)
+## R Squared R^2 = SSM\SST
+r_squared <- ssm/sst
+## Number of observations
+n <- nrow(heights_df)
+## Number of regression parameters
+p <- 2
+## Corrected Degrees of Freedom for Model (p-1)
+dfm <- p - 1
+## Degrees of Freedom for Error (n-p)
+dfe <- n - p
+## Corrected Degrees of Freedom Total:   DFT = n - 1
+dft <- n - 1
+## Mean of Squares for Model:   MSM = SSM / DFM
+msm <- ssm / dfm
+## Mean of Squares for Error:   MSE = SSE / DFE
+mse <- sse / dfe
+## Mean of Squares Total:   MST = SST / DFT
+mst <- sst / dft
+## F Statistic F = MSM/MSE
+f_score <- msm / mse
+## Adjusted R Squared R2 = 1 - (1 - R2)(n - 1) / (n - p)
+R2 <- summary(age_lm)$r.squared
+adjusted_r_squared <- 1 - (1 - R2)*(n - 1) / (n - p)
+## Calculate the p-value from the F distribution
+p_value <- pf(f_score, dfm, dft, lower.tail=F)
+```
+```{r include = TRUE}
+mean_earn
+sse
+ssm
+residuals
+sse
+r_squared
+n
+p
+dfm
+dfe
+dft
+msm
+mse
+mst
+f_score
+adjusted_r_squared
+p_value
+```
+```{r include = TRUE}
+mean_earn
+sst
+ssm
+residuals
+sse
+r_squared
+n
+p
+dfm
+dfe
+dft
+msm
+mse
+mst
+f_score
+adjusted_r_squared
+```
