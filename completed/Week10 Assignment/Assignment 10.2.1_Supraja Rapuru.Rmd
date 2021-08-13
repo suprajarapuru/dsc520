@@ -1,0 +1,225 @@
+---
+title: "ASSIGNMENT 10.2.1"
+author: "Supraja Rapuru"
+date: "8/12/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r cars}
+library(caTools)
+library(ggplot2)
+setwd('C:/Users/Supraja/dsc520')
+
+# Load the `data/binary-classifier-data.csv` to
+binary_df <- read.csv("data/binary-classifier-data.csv")
+
+# Examine the structure of `binary-classifier-data.csv` using `str()`
+str(binary_df)
+
+# Show the top rows of binary-classifier-data.csv 
+head(binary_df)
+
+# Load the `data/trinary-classifier-data.csv` to
+trinary_df <- read.csv("data/trinary-classifier-data.csv")
+
+# Examine the structure of `trinary-classifier-data.csv` using `str()`
+str(trinary_df)
+
+# Show the top rows of trinary-classifier-data.csv 
+head(trinary_df)
+
+# i.Plot the data from each dataset using a scatter plot.
+#scatter plot - binary_df
+ggplot(binary_df, aes(x=binary_df$x, y=binary_df$y)) + geom_point(aes(color
+                                                                      =binary_df$label))
+#scatter plot - trinary_df
+ggplot(trinary_df, aes(x=trinary_df$x, y=trinary_df$y)) + geom_point(aes(color=trinary_df$label))
+#Normalization of binary_df
+normalize <- function(x) { return ((x - min(x)) / (max(x) - min(x))) }
+
+binary_df.n=as.data.frame(lapply(binary_df[,2:3], normalize))
+
+trinary_df.n=as.data.frame(lapply(trinary_df[,2:3], normalize))
+
+set.seed(123)
+dat.d <- sample(1:nrow(binary_df.n),size=nrow(binary_df.n)*0.7,replace = FALSE)
+
+#random selection of 70% data.
+train.binary_df <- binary_df[dat.d,] # 70% training data
+test.binary_df <- binary_df[-dat.d,] # remaining 30% test data
+
+#Creating seperate dataframe for 'label' feature which is our target.
+train.binary_df_label <- binary_df[dat.d,1]
+test.binary_df_label <-binary_df[-dat.d,1]
+
+#Find the number of observation
+NROW(train.binary_df)
+
+#So, we have 700 observations in our training data set. The square root of 
+# 700 is around 26.45, therefore we’ll create two models. One with ‘K’ value as 
+# 26 and the other model with a ‘K’ value as 27.
+
+library(class)
+
+knn.binary_df.1 <- knn(train=train.binary_df, test=test.binary_df, cl=train.binary_df_label, k=1)
+
+#After building the model, it is time to calculate the accuracy of the created models:
+#Calculate the proportion of correct classification for k = 32, 33
+ACC.binary_df.1 <- 100 * sum(test.binary_df_label == knn.binary_df.1)/NROW(test.binary_df_label)
+ACC.binary_df.1
+#Accuracy is 98.22
+
+# Check prediction against actual value in tabular form for k=32
+table(knn.binary_df.1 ,test.binary_df_label)
+
+#use the confusion matrix to calculate the accuracy
+library(caret)
+
+confusionMatrix(table(knn.binary_df.1 ,test.binary_df_label))
+
+#Normalization of trinary_df
+normalize <- function(x) { return ((x - min(x)) / (max(x) - min(x))) }
+
+trinary_df.n=as.data.frame(lapply(trinary_df[,2:3], normalize))
+
+trinary_df.n=as.data.frame(lapply(trinary_df[,2:3], normalize))
+
+set.seed(123)
+dat.d <- sample(1:nrow(trinary_df.n),size=nrow(trinary_df.n)*0.7,replace =
+                  FALSE)
+
+#random selection of 70% data.
+train.trinary_df <- trinary_df[dat.d,] # 70% training data
+test.trinary_df <- trinary_df[-dat.d,] # remaining 30% test data
+
+
+#Creating seperate dataframe for 'label' feature which is our target.
+train.trinary_df_label <- trinary_df[dat.d,1]
+test.trinary_df_label <-trinary_df[-dat.d,1]
+
+#Find the number of observation
+NROW(train.trinary_df)
+
+library(class)
+
+knn.trinary_df.1 <- knn(train=train.trinary_df, test=test.trinary_df, cl=train.trinary_df_label, k=1)
+
+#After building the model, it is time to calculate the accuracy of the created models: 
+# Calculate the proportion of correct classification for k = 32, 33
+
+ACC.trinary_df.1 <- 100 * sum(test.trinary_df_label == knn.trinary_df.1)/NROW(test.trinary_df_label)
+
+ACC.trinary_df.1 
+#Accuracy is 95.75
+
+# Check prediction against actual value in tabular form for k=32
+table(knn.trinary_df.1 ,test.trinary_df_label)
+
+#use the confusion matrix to calculate the accuracy
+library(caret)
+
+confusionMatrix(table(knn.trinary_df.1 ,test.trinary_df_label))
+
+#ii.Fit a k nearest neighbors’ model for each dataset for k=3, k=5, k=10, 
+# k=15, k=20, and k=25. Compute the accuracy of the resulting models for 
+# each value of k. Plot the results in a graph where the x-axis is the 
+# different values of k and the y-axis is the accuracy of the model.
+
+#Accuracy level of binary dataset
+j<-1
+k.optm<-1
+for (i in c(3,5,10,15,20,25)){
+  knn.mod <- knn(train=train.binary_df, test=test.binary_df, cl=train.binary_df_label, k=i)
+  k.optm[i] <- 100 * sum(test.binary_df_label == knn.mod)/NROW(test.binary_df_label)
+  k<-i
+  j <-j+1
+  cat(k,'=',k.optm[i],'')}
+
+#Accuracy plot
+plot(k.optm, type="b", xlab="K- Value",ylab="Accuracy level of binary datas
+et")
+
+#Accuracy level of trinary dataset
+j<-1
+k.optm<-1
+for (i in c(3,5,10,15,20,25)){
+  knn.mod <- knn(train=train.trinary_df, test=test.trinary_df, cl=train.trinary_df_label, k=i)
+  k.optm[i] <- 100 * sum(test.trinary_df_label == knn.mod)/NROW(test.trinary_df_label)
+  k<-i
+  j <-j+1
+  cat(k,'=',k.optm[i],'')}
+
+#Accuracy plot
+plot(k.optm, type="b", xlab="K- Value",ylab="Accuracy level of trinary data
+set")
+
+#i.Looking back at the plots of the data, do you think a linear classifier 
+# would work well on these datasets?
+  
+x1=binary_df[2]
+x2=binary_df[3]
+
+y <- sign(3 * x1 - 4 * x2 - 1)
+
+y[ y == -1] <- 0
+
+df <- cbind.data.frame( y, x1, x2)
+names(df)[1] <- 'y'
+names(df)[2]<-'x1'
+names(df)[3]<-'x2'
+mdl <- glm( y ~ . , data = df , family=binomial)
+
+slope <- coef(mdl)[2]/(-coef(mdl)[3])
+intercept <- coef(mdl)[1]/(-coef(mdl)[3]) 
+
+library(lattice)
+xyplot( x2 ~ x1 , data = df, groups = y,
+        panel=function(...){
+          panel.xyplot(...)
+          panel.abline(intercept , slope)
+          panel.grid(...)
+        })
+
+x1=trinary_df[2]
+x2=trinary_df[3]
+
+y <- sign(3 * x1 - 4 * x2 - 1)
+
+y[ y == -1] <- 0
+
+df <- cbind.data.frame( y, x1, x2)
+names(df)[1] <- 'y'
+names(df)[2]<-'x1'
+names(df)[3]<-'x2'
+mdl <- glm( y ~ . , data = df , family=binomial)
+
+slope <- coef(mdl)[2]/(-coef(mdl)[3])
+intercept <- coef(mdl)[1]/(-coef(mdl)[3]) 
+
+library(lattice)
+xyplot( x2 ~ x1 , data = df, groups = y,
+        panel=function(...){
+          panel.xyplot(...)
+          panel.abline(intercept , slope)
+          panel.grid(...)
+        })
+
+# By looking at the plots I think that the linear classfier would work well 
+# on binary dataset but not on trinary dataset.
+
+# ii.How does the accuracy of your logistic regression classifier from last 
+# week compare? Why is the accuracy different between these two methods?
+
+# The accuracy of logistic regression model was 67% but the accuracy of knn 
+# model is 98% for binary dataset
+# The difference in accuracy is due to the non-linearness of the data in 
+# the input datasets.
+# KNN fits good for the non-linear dataset and hence is more suitable model 
+# in our case.
+```
